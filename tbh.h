@@ -20,9 +20,9 @@ typedef struct {
 		isOnTgt;
 } Tbh;
 
-bool isTbhInThresh(Tbh *tbh, float thresh) { return abs(tbh->err) <= thresh; }
+bool isTbhInThresh(Tbh *tbh, float thresh) { return fabs(tbh->err) <= thresh; }
 
-bool isTbhDerivInThresh(Tbh *tbh, float thresh) { return abs(tbh->deriv) <= thresh; }
+bool isTbhDerivInThresh(Tbh *tbh, float thresh) { return fabs(tbh->deriv) <= thresh; }
 
 void updateTbhErr(Tbh *tbh) {
 	tbh->err = tbh->setpoint - tbh->input;
