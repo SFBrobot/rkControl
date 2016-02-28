@@ -67,7 +67,7 @@ task main()
 		yAccel[0] = SensorValue[yAmtr];
 		deltaTheta[0] = SensorValue[gyro] - thetaLast;
 		thetaLast = SensorValue[gyro];
-		if(abs(deltaTheta[0]) < GYRO_THRESH)
+		if(fabs(deltaTheta[0]) < GYRO_THRESH)
 			deltaTheta[0] = 0;
 
 		//xAccelAvg =
@@ -89,8 +89,8 @@ task main()
 		yVel += yAccelAvg;
 		theta += deltaThetaAvg;
 
-		xPos += sinDegrees(theta) * yVel;
-		yPos += cosDegrees(theta) * yVel;
+		xPos += sin(theta * PI / 180) * yVel;
+		yPos += cos(theta * PI / 180) * yVel;
 
 		if(abs(LY) > STICK_THRESH)
 			stickLY = LY;
@@ -103,5 +103,6 @@ task main()
 
 		arcadeDrive(stickRX, stickLY);
 
+		wait1Msec(20);
 	}
 }
