@@ -105,8 +105,8 @@ float updateTbh(Tbh *tbh, float input, float deriv, float dt) {
 	tbh->out = tbh->integ + tbh->errThresh * tbh->kP;
 
 	if (tbh->doSgnLock) {
-		if (tbh->input > 0 && tbh->out < 0) tbh->out = 0;
-		else if (tbh->input < 0 && tbh->out > 0) tbh->out = 0;
+		if (tbh->input > 0 && tbh->out < 0) tbh->integ = tbh->out = 0;
+		else if (tbh->input < 0 && tbh->out > 0) tbh->integ = tbh->out = 0;
 	}
 
 	return tbh->out;
