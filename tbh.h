@@ -7,7 +7,6 @@ typedef struct {
     integ,
     integLim,
     integXing,
-    kP,
     kI,
     kD,
     kDCross,
@@ -62,7 +61,6 @@ void setTbhDoRun(Tbh *tbh, bool doRun) {
 void initTbh(
   Tbh *tbh,
   float thresh,
-  float kP,
   float kI,
   float kD,
   float kDCross,
@@ -86,13 +84,12 @@ void initTbh(
 void initTbh(
   Tbh *tbh,
   float thresh,
-  float kP,
   float kI,
   float kD,
   float integLim,
   bool doSgnLock) {
 
-  initTbh(tbh, thresh, kP, kI, kD, kD, integLim, doSgnLock);
+  initTbh(tbh, thresh, kI, kD, kD, integLim, doSgnLock);
 }
 
 float updateTbh(Tbh *tbh, float input, float deriv, float dt) {
@@ -137,7 +134,7 @@ float updateTbh(Tbh *tbh, float input, float deriv, float dt) {
     tbh->errXing = tbh->err;
   }
 
-  tbh->out = tbh->integ + tbh->errThresh * tbh->kP;
+  tbh->out = tbh->integ;
 
   if (tbh->doSgnLock) {
     if (tbh->input > 0 && tbh->out < 0) tbh->integ = tbh->out = 0;
