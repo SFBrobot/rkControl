@@ -15,7 +15,6 @@ typedef struct {
     out;
 
   bool doSgnLock,
-    doDerivSgnLock,
     hasXed,
     doRun,
     doUpdate,
@@ -74,7 +73,6 @@ void initTbh(
   tbh->out = 0;
 
   tbh->doSgnLock = doSgnLock;
-  tbh->doDerivSgnLock = kDCross != kD;
   tbh->doUpdate = true;
 
   resetTbh(tbh, 0);
@@ -101,11 +99,6 @@ float updateTbh(Tbh *tbh, float input, float deriv, float dt) {
   if (!tbh->doRun) {
     tbh->doUpdate = false;
     return tbh->out = 0;
-  }
-
-  if (tbh->doDerivSgnLock) {
-    if (tbh->err > 0 && tbh->deriv > 0) tbh->deriv;
-    else if (tbh->err < 0 && tbh->deriv < 0) tbh->deriv = 0;
   }
 
   tbh->integ = fmaxf(
@@ -137,8 +130,9 @@ float updateTbh(Tbh *tbh, float input, float deriv, float dt) {
   tbh->out = tbh->integ;
 
   if (tbh->doSgnLock) {
-    if (tbh->input > 0 && tbh->out < 0) tbh->integ = tbh->out = 0;
-    else if (tbh->input < 0 && tbh->out > 0) tbh->integ = tbh->out = 0;
+    if ((tbh->input > 0 && tbh->out < 0) ||
+      (tbh->input < 0 && tbh->out > 0))
+      tbh->integ = tbh->out = 0;
   }
 
   return tbh->out;
