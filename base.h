@@ -7,35 +7,35 @@ int ctlLoopInterval = 50;
 void updateCtl(float dt);
 
 task ctlLoop() {
-	bool doRun = doCtlLoop;
+  bool doRun = doCtlLoop;
 
-	long time, lastTime = nSysTime - 1;
-	float dt = 0;
+  long time, lastTime = nSysTime - 1;
+  float dt = 0;
 
-	while (doRun) {
-		doRun = doCtlLoop;
-		time = nSysTime;
+  while (doRun) {
+    doRun = doCtlLoop;
+    time = nSysTime;
 
-		if (time < lastTime) dt = 0.;
-		else dt = (float)(time - lastTime) / 1000.;
+    if (time < lastTime) dt = 0.;
+    else dt = (float)(time - lastTime) / 1000.;
 
-		updateCtl(dt);
+    updateCtl(dt);
 
-		lastTime = time;
+    lastTime = time;
 
-		wait1Msec(ctlLoopInterval);
-	}
+    wait1Msec(ctlLoopInterval);
+  }
 }
 
 void startCtlLoop() {
-	if (!doCtlLoop) {
-		doCtlLoop = true;
+  if (!doCtlLoop) {
+    doCtlLoop = true;
 
-		startTask(ctlLoop);
-	}
+    startTask(ctlLoop);
+  }
 }
 
 void stopCtlLoop() {
-	doCtlLoop = false;
+  doCtlLoop = false;
 }
 #endif
