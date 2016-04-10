@@ -111,7 +111,8 @@ float updateTbh(Tbh *tbh, float input, float deriv, float dt) {
       tbh->integ + (
         tbh->errThresh * tbh->kI
         - tbh->deriv * (
-          (tbh->err > 0 && tbh->deriv > 0) || (tbh->err < 0 && tbh->deriv < 0)
+          //(tbh->err > 0 && tbh->deriv > 0) || (tbh->err < 0 && tbh->deriv < 0)
+          (false)
           ? tbh->kDCross
           : tbh->kD
           )
