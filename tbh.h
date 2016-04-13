@@ -35,7 +35,7 @@ void updateTbhErr(Tbh *tbh) {
 }
 
 void setTbh(Tbh *tbh, float setpoint) {
-  tbh->hasXed = tbh->setpoint != 0;
+  tbh->hasXed = tbh->hasXed && tbh->setpoint != 0;
 
   if (tbh->hasXed) tbh->integXing *= setpoint / tbh->setpoint; //Take a linear guess
   else tbh->integXing = 0;
