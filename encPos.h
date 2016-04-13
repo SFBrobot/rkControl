@@ -1,5 +1,5 @@
 /*
-Documentation for this
+"Documentation" for this
 	To use it, you need to put initPos in the pre-auton, and updatePos in the autonomous and driver control while loops.
 	
 void initPos(Pos *pos, float convertToDegs, tSensors lEnc, tSensors rEnc)
