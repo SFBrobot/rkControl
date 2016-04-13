@@ -53,7 +53,7 @@ void updateEnc(Enc *enc) {
 void updatePos(Pos *pos) {
 	updateEnc(&pos->lEnc);
 	updateEnc(&pos->rEnc);
-	pos->theta = ((pos->lEnc.deltaVal - pos->rEnc.deltaVal) * pos->convertToDegs) % 360;
+	pos->theta = 1. ((pos->lEnc.deltaVal - pos->rEnc.deltaVal) * pos->convertToDegs) % 360;
 	pos->x += .5 * (pos->lEnc.deltaVal + pos->rEnc.deltaVal) * cosDegrees(pos->theta);
 	pos->y += .5 * (pos->lEnc.deltaVal + pos->rEnc.deltaVal) * sinDegrees(pos->theta);
 }
