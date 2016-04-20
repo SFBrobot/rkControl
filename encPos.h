@@ -1,7 +1,7 @@
 /*
 "Documentation" for this
 	To use it, you need to put initPos in the pre-auton, and updatePos in the autonomous and driver control while loops.
-	
+
 void initPos(Pos *pos, float convertToDegs, tSensors lEnc, tSensors rEnc)
 	takes 4 arguments
 		pointer to Pos struct
@@ -19,14 +19,15 @@ void updatePos(Pos *pos)
 		pointer to a Pos struct
 	contains its own updateEnc() function calls (why you don't need them)
 */
+#ifndef ENC_POS
+#define ENC_POS
 
 typedef struct {
 	long val,
 		valLast;
 	float deltaVal;
 	tSensors name;
-} Encoder;
-typedef Encoder Enc; //Those 4 letters are a real pain
+} Enc;
 
 typedef struct {
 	float x,
@@ -35,8 +36,7 @@ typedef struct {
 		convertToDegs;
 	Enc lEnc,
 		rEnc;
-} Position;
-typedef Position Pos;
+} Pos;
 
 void initPos(Pos *pos, float convertToDegs, tSensors lEnc, tSensors rEnc) {
 	pos->lEnc.name = lEnc;
@@ -53,7 +53,8 @@ void updateEnc(Enc *enc) {
 void updatePos(Pos *pos) {
 	updateEnc(&pos->lEnc);
 	updateEnc(&pos->rEnc);
-	pos->theta = 1. ((pos->lEnc.deltaVal - pos->rEnc.deltaVal) * pos->convertToDegs) % 360;
+	pos->theta = 1. * ((pos->lEnc.deltaVal - pos->rEnc.deltaVal) * pos->convertToDegs) % 360;
 	pos->x += .5 * (pos->lEnc.deltaVal + pos->rEnc.deltaVal) * cosDegrees(pos->theta);
 	pos->y += .5 * (pos->lEnc.deltaVal + pos->rEnc.deltaVal) * sinDegrees(pos->theta);
 }
+#endif
