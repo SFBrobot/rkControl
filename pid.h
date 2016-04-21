@@ -41,6 +41,10 @@ void setPid(Pid *pid, float setpoint) {
   updatePidErr(pid);
 }
 
+void movePid(Pid *pid, float by) {
+	setPid(pid, pid->setpoint + by);
+}
+
 void resetPid(Pid *pid, float input) {
   pid->input = input;
   pid->deriv = pid->integ = 0;
