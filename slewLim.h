@@ -1,3 +1,6 @@
+#ifndef SLEW_LIM
+#define SLEW_LIM
+
 typedef struct {
   float val,
     valLast,
@@ -19,4 +22,7 @@ float setSLim(SLim *lim, float setPoint) {
     else
       return lim->val = lim->valLast - lim->max;
   }
+  else
+  	return lim->val;
 }
+#endif
