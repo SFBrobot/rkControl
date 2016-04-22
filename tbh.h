@@ -9,13 +9,14 @@ typedef struct {
     integXing,
     kI,
     kD,
-    kDCross,
+    kDXDown,
+    kDXUp,
+    out,
     setpoint,
     thresh,
-    out;
+    xSignLim;
 
-  bool doSgnLock,
-    hasXed,
+  bool hasXed,
     doRun,
     doUpdate,
     isOnTgt;
@@ -65,17 +66,19 @@ void initTbh(
   float thresh,
   float kI,
   float kD,
-  float kDCross,
+  float kDXUp,
+  float kDXDown,
   float integLim,
-  bool doSgnLock) {
+  float xSignLim) {
   tbh->integLim = integLim;
   tbh->kI = kI;
   tbh->kD = kD;
-  tbh->kDCross = kDCross;
-  tbh->thresh = thresh;
+  tbh->kDXUp = kDXUp;
+  tbh->kDXDown = kDXDown;
   tbh->out = 0;
+  tbh->thresh = thresh;
+  tbh->xSignLim = xSignLim;
 
-  tbh->doSgnLock = doSgnLock;
   tbh->doUpdate = true;
 
   resetTbh(tbh, 0);
@@ -87,10 +90,22 @@ void initTbh(
   float thresh,
   float kI,
   float kD,
+  float kDCross,
   float integLim,
-  bool doSgnLock) {
+  float xSignLim) {
 
-  initTbh(tbh, thresh, kI, kD, kD, integLim, doSgnLock);
+  initTbh(tbh, thresh, kI, kD, kDCross, kDCross, integLim, xSignLim);
+}
+
+void initTbh(
+  Tbh *tbh,
+  float thresh,
+  float kI,
+  float kD,
+  float integLim,
+  float xSignLim) {
+
+  initTbh(tbh, thresh, kI, kD, kD, integLim, xSignLim);
 }
 
 float updateTbh(Tbh *tbh, float input, float deriv, float dt) {
@@ -112,7 +127,7 @@ float updateTbh(Tbh *tbh, float input, float deriv, float dt) {
         tbh->errThresh * tbh->kI
         - tbh->deriv * (
           (tbh->err > 0 && tbh->deriv > 0) || (tbh->err < 0 && tbh->deriv < 0)
-          ? tbh->kDCross
+          ? (tbh->err > 0 ? tbh->kDXUp : tbh->kDXDown)
           : tbh->kD
           )
         ) * dt
@@ -132,10 +147,9 @@ float updateTbh(Tbh *tbh, float input, float deriv, float dt) {
 
   tbh->out = tbh->integ;
 
-  if (tbh->doSgnLock) {
-    if ((tbh->input > 0 && tbh->out < 0) ||
-      (tbh->input < 0 && tbh->out > 0))
-      tbh->integ = tbh->out = 0;
+  if (tbh->xSignLim >= 0) {
+    if (tbh->input > 0) tbh->out = fmaxf(-tbh->xSignLim, tbh->out);
+    else if (tbh->input < 0) tbh->out = fminf(tbh->xSignLim, tbh->out);
   }
 
   return tbh->out;
