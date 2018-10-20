@@ -19,13 +19,23 @@ typedef struct {
     isOnTgt;
 } Pid;
 
-bool isPidInThresh(Pid *pid, float thresh) { return fabs(pid->err) <= thresh; }
+bool isPidInThresh(Pid *pid, float thresh)
+{
+	return fabs(pid->err) <= thresh;
+}
 
-bool isPidIntegInThresh(Pid *pid, float thresh) { return fabs(pid->integ) <= thresh; }
+bool isPidIntegInThresh(Pid *pid, float thresh)
+{
+	return fabs(pid->integ) <= thresh;
+}
 
-bool isPidDerivInThresh(Pid *pid, float thresh) { return fabs(pid->deriv) <= thresh; }
+bool isPidDerivInThresh(Pid *pid, float thresh)
+{
+	return fabs(pid->deriv) <= thresh;
+}
 
-void updatePidErr(Pid *pid) {
+void updatePidErr(Pid *pid)
+{
   pid->err = pid->setpoint - pid->input;
 
   pid->isOnTgt = isPidInThresh(pid, pid->thresh);
@@ -34,25 +44,29 @@ void updatePidErr(Pid *pid) {
   else pid->errThresh = pid->err - pid->thresh * sgn(pid->err);
 }
 
-void setPid(Pid *pid, float setpoint) {
+void setPid(Pid *pid, float setpoint)
+{
   pid->setpoint = setpoint;
   pid->integ = 0;
 
   updatePidErr(pid);
 }
 
-void movePid(Pid *pid, float by) {
+void movePid(Pid *pid, float by)
+{
 	setPid(pid, pid->setpoint + by);
 }
 
-void resetPid(Pid *pid, float input) {
+void resetPid(Pid *pid, float input)
+{
   pid->input = input;
   pid->deriv = pid->integ = 0;
 
   setPid(pid, input);
 }
 
-void setPidDoRun(Pid *pid, bool doRun) {
+void setPidDoRun(Pid *pid, bool doRun)
+{
   pid->doRun = doRun;
 
   if (doRun) pid->doUpdate = true;
@@ -65,7 +79,8 @@ void initPid(
   float kI,
   float kD,
   float integLim,
-  bool doSgnLock) {
+  bool doSgnLock)
+{
   pid->integLim = integLim;
   pid->kP = kP;
   pid->kI = kI;
@@ -80,27 +95,31 @@ void initPid(
   setPidDoRun(pid, false);
 }
 
-float updatePid(Pid *pid, float input, float deriv, float dt) {
+float updatePid(Pid *pid, float input, float deriv, float dt)
+{
   pid->input = input;
   pid->deriv = deriv;
 
   updatePidErr(pid);
 
-  if (!pid->doRun) {
+  if (!pid->doRun)
+  {
     pid->doUpdate = false;
     return pid->out = 0;
   }
 
   pid->integ = fmaxf(-pid->integLim, fminf(pid->integLim, pid->integ + pid->errThresh * pid->kI * dt));
 
-  if ((pid->errXing <= 0 && pid->err > 0) || (pid->errXing >= 0 && pid->err < 0)) {
+  if ((pid->errXing <= 0 && pid->err > 0) || (pid->errXing >= 0 && pid->err < 0))
+  {
     pid->integ = 0;
     pid->errXing = pid->err;
   }
 
   pid->out = pid->errThresh * pid->kP + pid->integ - pid->deriv * pid->kD;
 
-  if (pid->doSgnLock) {
+  if (pid->doSgnLock)
+  {
     if (pid->input > 0 && pid->out < 0) pid->out = 0;
     else if (pid->input < 0 && pid->out > 0) pid->out = 0;
   }
